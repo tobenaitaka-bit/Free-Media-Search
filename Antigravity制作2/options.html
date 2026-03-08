@@ -1,0 +1,464 @@
+<!DOCTYPE html>
+<html lang="ja">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Free Media Search — Settings</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Helvetica Neue', Arial, sans-serif;
+            background: #1e1e2e;
+            color: #f0f0f8;
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: flex-start;
+            padding: 48px 20px;
+        }
+
+        .settings-card {
+            width: 100%;
+            max-width: 960px;
+            background: #2a2a3e;
+            border: 1px solid rgba(255, 255, 255, 0.12);
+            border-radius: 16px;
+            padding: 40px 48px;
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.4);
+        }
+
+        .settings-header {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            margin-bottom: 8px;
+        }
+
+        .settings-header svg {
+            width: 24px;
+            height: 24px;
+            color: #7c5cfc;
+        }
+
+        .settings-header h1 {
+            font-size: 20px;
+            font-weight: 700;
+            background: linear-gradient(135deg, #7c5cfc 0%, #c084fc 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .settings-subtitle {
+            font-size: 13px;
+            color: #8888a8;
+            margin-bottom: 28px;
+            line-height: 1.5;
+        }
+
+        .form-group {
+            margin-bottom: 20px;
+        }
+
+        .form-label {
+            display: block;
+            font-size: 13px;
+            font-weight: 600;
+            color: #b8b8d0;
+            margin-bottom: 8px;
+            letter-spacing: 0.3px;
+        }
+
+        .form-label .badge {
+            display: inline-block;
+            padding: 2px 8px;
+            border-radius: 4px;
+            font-size: 10px;
+            font-weight: 600;
+            letter-spacing: 0.3px;
+            text-transform: uppercase;
+            margin-left: 8px;
+            vertical-align: middle;
+        }
+
+        .badge-pexels {
+            background: rgba(5, 160, 129, 0.85);
+            color: white;
+        }
+
+        .badge-pixabay {
+            background: rgba(245, 166, 35, 0.85);
+            color: white;
+        }
+
+        .form-input {
+            width: 100%;
+            padding: 12px 16px;
+            border: 1px solid rgba(255, 255, 255, 0.12);
+            border-radius: 12px;
+            background: rgba(255, 255, 255, 0.08);
+            color: #f0f0f8;
+            font-family: 'SF Mono', 'Consolas', 'Monaco', monospace;
+            font-size: 13px;
+            outline: none;
+            transition: all 0.2s ease;
+        }
+
+        .form-input::placeholder {
+            color: #8888a8;
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Helvetica Neue', Arial, sans-serif;
+        }
+
+        .form-input:focus {
+            border-color: #7c5cfc;
+            box-shadow: 0 0 0 3px rgba(124, 92, 252, 0.3);
+            background: rgba(255, 255, 255, 0.1);
+        }
+
+        .form-hint {
+            margin-top: 6px;
+            font-size: 11px;
+            color: #8888a8;
+        }
+
+        .form-hint a {
+            color: #7c5cfc;
+            text-decoration: none;
+        }
+
+        .form-hint a:hover {
+            text-decoration: underline;
+        }
+
+        .save-btn {
+            width: 100%;
+            padding: 14px 24px;
+            border: none;
+            border-radius: 12px;
+            background: linear-gradient(135deg, #7c5cfc 0%, #9078ff 100%);
+            color: white;
+            font-family: inherit;
+            font-size: 14px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            margin-top: 8px;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .save-btn::before {
+            content: '';
+            position: absolute;
+            inset: 0;
+            background: linear-gradient(135deg, rgba(255, 255, 255, 0.15) 0%, transparent 100%);
+            opacity: 0;
+            transition: opacity 0.2s ease;
+        }
+
+        .save-btn:hover::before {
+            opacity: 1;
+        }
+
+        .save-btn:hover {
+            transform: translateY(-1px);
+            box-shadow: 0 4px 16px rgba(124, 92, 252, 0.3);
+        }
+
+        .save-btn:active {
+            transform: translateY(0);
+        }
+
+        .save-message {
+            margin-top: 16px;
+            padding: 12px 16px;
+            border-radius: 10px;
+            font-size: 13px;
+            font-weight: 500;
+            text-align: center;
+            display: none;
+            animation: fadeIn 0.3s ease;
+        }
+
+        .save-message.error {
+            display: block;
+            background: rgba(248, 113, 113, 0.15);
+            border: 1px solid rgba(248, 113, 113, 0.3);
+            color: #f87171;
+        }
+
+        /* ===== Success Panel ===== */
+        .success-panel {
+            display: none;
+            margin-top: 20px;
+            padding: 24px 20px;
+            border-radius: 12px;
+            background: rgba(52, 211, 153, 0.08);
+            border: 1px solid rgba(52, 211, 153, 0.2);
+            text-align: center;
+            animation: fadeIn 0.4s ease;
+        }
+
+        .success-panel.visible {
+            display: block;
+        }
+
+        .form-section.hidden {
+            display: none;
+        }
+
+        .success-icon {
+            width: 48px;
+            height: 48px;
+            margin: 0 auto 12px;
+            background: rgba(52, 211, 153, 0.15);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            animation: scaleIn 0.4s ease;
+        }
+
+        .success-icon svg {
+            width: 24px;
+            height: 24px;
+            color: #34d399;
+        }
+
+        .success-title {
+            font-size: 15px;
+            font-weight: 600;
+            color: #34d399;
+            margin-bottom: 8px;
+        }
+
+        .success-hint {
+            font-size: 12px;
+            color: #8888a8;
+            line-height: 1.6;
+            margin-bottom: 16px;
+        }
+
+        .success-actions {
+            display: flex;
+            gap: 12px;
+            justify-content: center;
+            flex-wrap: wrap;
+            margin-bottom: 16px;
+        }
+
+        .close-hint {
+            display: none;
+            margin-top: 12px;
+            padding: 10px;
+            background: rgba(255, 255, 255, 0.05);
+            border-radius: 8px;
+            font-size: 13px;
+            color: #f87171;
+            font-weight: 600;
+            animation: fadeIn 0.3s ease;
+        }
+
+        .success-btn {
+            padding: 10px 20px;
+            border: none;
+            border-radius: 10px;
+            font-family: inherit;
+            font-size: 13px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            text-decoration: none;
+        }
+
+        .success-btn svg {
+            width: 14px;
+            height: 14px;
+        }
+
+        .success-btn-primary {
+            background: linear-gradient(135deg, #7c5cfc 0%, #9078ff 100%);
+            color: white;
+        }
+
+        .success-btn-primary:hover {
+            transform: translateY(-1px);
+            box-shadow: 0 4px 16px rgba(124, 92, 252, 0.3);
+        }
+
+        .success-btn-secondary {
+            background: rgba(255, 255, 255, 0.08);
+            border: 1px solid rgba(255, 255, 255, 0.12);
+            color: #b8b8d0;
+        }
+
+        .success-btn-secondary:hover {
+            background: rgba(255, 255, 255, 0.12);
+            border-color: rgba(255, 255, 255, 0.25);
+            color: #f0f0f8;
+        }
+
+        .edit-divider {
+            margin-top: 16px;
+            padding-top: 16px;
+            border-top: 1px solid rgba(255, 255, 255, 0.08);
+        }
+
+        .edit-btn {
+            width: 100%;
+            padding: 10px 16px;
+            border: 1px dashed rgba(255, 255, 255, 0.2);
+            border-radius: 10px;
+            background: transparent;
+            color: #8888a8;
+            font-family: inherit;
+            font-size: 12px;
+            font-weight: 500;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 6px;
+        }
+
+        .edit-btn svg {
+            width: 14px;
+            height: 14px;
+        }
+
+        .edit-btn:hover {
+            border-color: rgba(124, 92, 252, 0.4);
+            color: #b8b8d0;
+            background: rgba(124, 92, 252, 0.06);
+        }
+
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+                transform: translateY(-4px);
+            }
+
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        @keyframes scaleIn {
+            from {
+                opacity: 0;
+                transform: scale(0.5);
+            }
+
+            to {
+                opacity: 1;
+                transform: scale(1);
+            }
+        }
+    </style>
+</head>
+
+<body>
+    <div class="settings-card">
+        <div class="settings-header">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
+                stroke-linejoin="round">
+                <circle cx="12" cy="12" r="3"></circle>
+                <path
+                    d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83-2.83l.06-.06A1.65 1.65 0 0 0 4.68 15a1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 2.83-2.83l.06.06A1.65 1.65 0 0 0 9 4.68a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 2.83l-.06.06A1.65 1.65 0 0 0 19.4 9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z">
+                </path>
+            </svg>
+            <h1>Free Media Search Settings</h1>
+        </div>
+        <p class="settings-subtitle">
+            検索に使用するAPIキーを入力してください。<br>
+            APIキーはこの端末のブラウザにのみ保存されます。
+        </p>
+
+        <div id="formSection" class="form-section">
+            <div class="form-group">
+                <label class="form-label" for="pexelsKey">
+                    API Key <span class="badge badge-pexels">Pexels</span>
+                </label>
+                <input type="text" id="pexelsKey" class="form-input" placeholder="Pexels APIキーを入力..."
+                    autocomplete="off">
+                <p class="form-hint">
+                    取得先: <a href="https://www.pexels.com/api/" target="_blank" rel="noopener">pexels.com/api</a>
+                </p>
+            </div>
+
+            <div class="form-group">
+                <label class="form-label" for="pixabayKey">
+                    API Key <span class="badge badge-pixabay">Pixabay</span>
+                </label>
+                <input type="text" id="pixabayKey" class="form-input" placeholder="Pixabay APIキーを入力..."
+                    autocomplete="off">
+                <p class="form-hint">
+                    取得先: <a href="https://pixabay.com/api/docs/" target="_blank" rel="noopener">pixabay.com/api/docs</a>
+                </p>
+            </div>
+
+            <button id="saveBtn" class="save-btn">Save</button>
+            <div id="saveMessage" class="save-message"></div>
+        </div>
+
+        <!-- Success Panel (shown after save) -->
+        <div id="successPanel" class="success-panel">
+            <div class="success-icon">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"
+                    stroke-linejoin="round">
+                    <polyline points="20 6 9 17 4 12"></polyline>
+                </svg>
+            </div>
+            <div class="success-title">✓ APIキーを保存しました</div>
+            <p class="success-hint">
+                このタブを閉じて、ツールバーの拡張アイコンをクリックして検索を始めましょう。
+            </p>
+            <div class="success-actions">
+                <button id="closeTabBtn" class="success-btn success-btn-secondary">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
+                        stroke-linejoin="round">
+                        <line x1="18" y1="6" x2="6" y2="18"></line>
+                        <line x1="6" y1="6" x2="18" y2="18"></line>
+                    </svg>
+                    このタブを閉じる
+                </button>
+                <button id="openExtBtn" class="success-btn success-btn-primary">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
+                        stroke-linejoin="round">
+                        <circle cx="11" cy="11" r="8"></circle>
+                        <line x1="21" y1="21" x2="16.65" y2="16.65"></line>
+                    </svg>
+                    拡張機能を使う
+                </button>
+            </div>
+            <div id="closeHint" class="close-hint">
+                ⚠ ブラウザの制限により自動で閉じられませんでした。このタブを手動で閉じてください。
+            </div>
+            <div class="edit-divider">
+                <button id="editKeysBtn" class="edit-btn">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
+                        stroke-linejoin="round">
+                        <path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"></path>
+                        <path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"></path>
+                    </svg>
+                    APIキーを追加・変更する
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <script src="options.js"></script>
+</body>
+
+</html>
